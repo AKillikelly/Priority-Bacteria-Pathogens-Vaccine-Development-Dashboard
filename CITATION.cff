@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "Please cite the repository release used for your analysis."
+title: "Priority Bacterial Pathogen Vaccine Development Dashboard"
+type: software
+version: 0.1.0
+date-released: 2026-06-22
+license: MIT
+repository-code: "https://github.com/YOUR-USERNAME/YOUR-REPOSITORY"
+abstract: "A source-linked static dashboard for human-vaccine development across selected priority bacterial pathogens."
+keywords:
+  - vaccine development
+  - bacterial pathogens
+  - ClinicalTrials.gov
+  - GitHub Pages
