@@ -1,0 +1,122 @@
+[
+  {
+    "id": "vibrio_cholerae",
+    "name": "Vibrio cholerae",
+    "short_name": "V. cholerae",
+    "group": "Enteric / epidemic-prone",
+    "priority_rationale": "Epidemic-prone bacterial disease with an established vaccination and stockpile pathway.",
+    "target_scope": "Human vaccines intended to prevent cholera caused by toxigenic V. cholerae, principally O1 and O139.",
+    "clinical_trials_queries": [
+      "cholera vaccine",
+      "Vibrio cholerae vaccine"
+    ],
+    "match_terms": [
+      "cholera",
+      "vibrio cholerae",
+      "oral cholera vaccine"
+    ],
+    "exclude_terms": [],
+    "order": 1
+  },
+  {
+    "id": "yersinia_pestis",
+    "name": "Yersinia pestis",
+    "short_name": "Y. pestis",
+    "group": "Zoonotic / high-consequence",
+    "priority_rationale": "High-consequence zoonotic pathogen and medical-countermeasure priority.",
+    "target_scope": "Human vaccines intended to prevent bubonic or pneumonic plague; veterinary-only records are excluded.",
+    "clinical_trials_queries": [
+      "plague vaccine",
+      "Yersinia pestis vaccine",
+      "rF1V vaccine"
+    ],
+    "match_terms": [
+      "yersinia pestis",
+      "plague vaccine",
+      "pneumonic plague",
+      "rf1v"
+    ],
+    "exclude_terms": [
+      "veterinary",
+      "dogs",
+      "cats",
+      "rodents"
+    ],
+    "order": 2
+  },
+  {
+    "id": "shigella_spp",
+    "name": "Shigella spp.",
+    "short_name": "Shigella",
+    "group": "Enteric / AMR-relevant",
+    "priority_rationale": "Major cause of diarrhoeal disease with rising antimicrobial resistance and no routine human vaccine programme represented in this dataset.",
+    "target_scope": "Human vaccines targeting one or more Shigella species or serotypes.",
+    "clinical_trials_queries": [
+      "Shigella vaccine",
+      "shigellosis vaccine",
+      "Shigella4V vaccine",
+      "altSonflex vaccine"
+    ],
+    "match_terms": [
+      "shigella",
+      "shigellosis",
+      "altsonflex",
+      "shigella4v",
+      "s4v2",
+      "invaplex"
+    ],
+    "exclude_terms": [],
+    "order": 3
+  },
+  {
+    "id": "klebsiella_pneumoniae",
+    "name": "Klebsiella pneumoniae",
+    "short_name": "K. pneumoniae",
+    "group": "Healthcare-associated / AMR",
+    "priority_rationale": "Critical antimicrobial-resistance threat and leading cause of healthcare-associated infection.",
+    "target_scope": "Human vaccines intended to prevent K. pneumoniae infection; pneumococcal vaccines are explicitly excluded.",
+    "clinical_trials_queries": [
+      "Klebsiella vaccine",
+      "Klebsiella pneumoniae vaccine",
+      "Kleb4V"
+    ],
+    "match_terms": [
+      "klebsiella",
+      "kleb4v",
+      "klebsiella pneumoniae"
+    ],
+    "exclude_terms": [
+      "streptococcus pneumoniae",
+      "pneumococcal vaccine"
+    ],
+    "order": 4
+  },
+  {
+    "id": "ints_salmonella",
+    "name": "Invasive non-typhoidal Salmonella enterica",
+    "short_name": "iNTS (Enteritidis / Typhimurium)",
+    "group": "Invasive enteric / AMR-relevant",
+    "priority_rationale": "Severe invasive disease burden, especially in African children, with S. Enteritidis and S. Typhimurium as principal vaccine targets.",
+    "target_scope": "Human vaccines targeting invasive non-typhoidal S. enterica, particularly serovars Enteritidis and Typhimurium; typhoid-only records are excluded.",
+    "clinical_trials_queries": [
+      "invasive nontyphoidal Salmonella vaccine",
+      "iNTS vaccine",
+      "Salmonella Enteritidis Typhimurium vaccine",
+      "iNTS-TCV"
+    ],
+    "match_terms": [
+      "invasive nontyphoidal salmonella",
+      "invasive non-typhoidal salmonella",
+      "ints vaccine",
+      "ints-tcv",
+      "ints-gmma",
+      "salmonella enteritidis",
+      "salmonella typhimurium",
+      "nontyphoidal salmonella"
+    ],
+    "exclude_terms": [
+      "typhoid vaccine only"
+    ],
+    "order": 5
+  }
+]
