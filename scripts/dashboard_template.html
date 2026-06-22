@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A source-linked vaccine development dashboard for priority bacterial pathogens.">
+  <title>Priority Bacterial Pathogen Vaccine Development Dashboard</title>
+  <style>
+    :root {
+      --ink: #102a2a;
+      --muted: #5f7473;
+      --paper: #f4f7f5;
+      --surface: #ffffff;
+      --line: #d9e3df;
+      --brand: #0a655d;
+      --brand-dark: #073c3a;
+      --accent: #d7f3ed;
+      --warning: #9c5a00;
+      --shadow: 0 12px 30px rgba(9, 55, 52, .09);
+      --radius: 16px;
+      --stage-0: #667085;
+      --stage-1: #7a5af8;
+      --stage-2: #175cd3;
+      --stage-3: #0e7090;
+      --stage-4: #067647;
+      --stage-5: #b54708;
+      --stage-6: #b42318;
+      --stage-7: #6941c6;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    a { color: var(--brand); }
+    button, select, input { font: inherit; }
+    button, select { cursor: pointer; }
+    .skip-link {
+      position: absolute; left: -9999px; top: 8px; z-index: 100;
+      padding: 10px 14px; background: #fff; color: #000; border-radius: 8px;
+    }
+    .skip-link:focus { left: 8px; }
+    .shell { width: min(1480px, calc(100% - 40px)); margin: 0 auto; }
+    .site-header {
+      color: #fff;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(215, 243, 237, .18), transparent 28%),
+        linear-gradient(120deg, #063a39, #0a655d 70%, #14786d);
+      border-bottom: 1px solid rgba(255,255,255,.16);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 18px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 760; letter-spacing: -.01em; }
+    .brand-mark {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border: 1px solid rgba(255,255,255,.6); border-radius: 10px; background: rgba(255,255,255,.1);
+    }
+    .nav-links { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .nav-links a { color: #fff; text-decoration: none; font-size: .92rem; opacity: .9; }
+    .nav-links a:hover, .nav-links a:focus-visible { text-decoration: underline; opacity: 1; }
+    .hero { padding: 48px 0 58px; display: grid; grid-template-columns: 1.45fr .8fr; gap: 52px; align-items: end; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;
+      color: #cdf5ec; text-transform: uppercase; letter-spacing: .12em; font-size: .74rem; font-weight: 800;
+    }
+    .hero h1 { margin: 0; max-width: 900px; font-size: clamp(2.1rem, 5vw, 4.45rem); line-height: .98; letter-spacing: -.055em; }
+    .hero-copy { margin: 24px 0 0; max-width: 850px; color: #e7f5f2; font-size: clamp(1rem, 1.8vw, 1.22rem); }
+    .hero-aside {
+      padding: 22px; border: 1px solid rgba(255,255,255,.24); border-radius: var(--radius);
+      background: rgba(1,31,30,.2); backdrop-filter: blur(5px);
+    }
+    .hero-aside strong { display: block; margin-bottom: 6px; }
+    .hero-aside p { margin: 0; color: #e7f5f2; font-size: .94rem; }
+    .hero-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 42px; padding: 10px 14px; border-radius: 10px; border: 1px solid transparent;
+      text-decoration: none; font-weight: 720; font-size: .9rem;
+    }
+    .button-primary { color: var(--brand-dark); background: #dff9f2; }
+    .button-secondary { color: #fff; background: transparent; border-color: rgba(255,255,255,.45); }
+    .button-subtle { color: var(--brand-dark); background: #fff; border-color: var(--line); }
+    .button:hover { transform: translateY(-1px); }
+    main { padding: 28px 0 64px; }
+    .notice {
+      margin: -46px auto 26px; position: relative; display: flex; align-items: flex-start; gap: 13px;
+      padding: 17px 19px; border: 1px solid #b9ddd5; background: #f7fffc; border-radius: 14px; box-shadow: var(--shadow);
+    }
+    .notice-icon { flex: 0 0 auto; width: 25px; height: 25px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--brand); font-weight: 800; }
+    .notice p { margin: 0; font-size: .94rem; }
+    .section { margin-top: 28px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 14px; }
+    .section-head h2 { margin: 0; font-size: clamp(1.35rem, 2vw, 1.8rem); letter-spacing: -.025em; }
+    .section-head p { margin: 4px 0 0; color: var(--muted); max-width: 800px; }
+    .updated { white-space: nowrap; font-size: .85rem; color: var(--muted); }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .kpi { padding: 19px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 14px rgba(9,55,52,.035); }
+    .kpi-value { display: block; font-size: 2rem; line-height: 1; font-weight: 790; letter-spacing: -.045em; }
+    .kpi-label { display: block; margin-top: 7px; color: var(--muted); font-size: .87rem; }
+    .controls {
+      position: sticky; top: 8px; z-index: 20; padding: 14px;
+      border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.96); box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .control-grid { display: grid; grid-template-columns: 1.3fr repeat(3, minmax(150px, .65fr)); gap: 10px; }
+    .field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: .74rem; font-weight: 760; text-transform: uppercase; letter-spacing: .055em; }
+    .field input, .field select {
+      width: 100%; height: 43px; padding: 9px 11px; border: 1px solid #c9d6d1; border-radius: 9px; color: var(--ink); background: #fff;
+    }
+    .field input:focus, .field select:focus { outline: 3px solid rgba(10,101,93,.16); border-color: var(--brand); }
+    .checks { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; padding-top: 12px; color: #385250; font-size: .88rem; }
+    .checks label { display: inline-flex; gap: 8px; align-items: center; }
+    .checks input { width: 17px; height: 17px; accent-color: var(--brand); }
+    .snapshot-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .snapshot {
+      min-height: 178px; padding: 16px; border: 1px solid var(--line); border-top: 4px solid var(--stage-color, var(--brand));
+      border-radius: 13px; background: #fff;
+    }
+    .snapshot-name { margin: 0; font-size: 1rem; line-height: 1.25; }
+    .snapshot-target { margin: 7px 0 12px; color: var(--muted); font-size: .8rem; }
+    .stage-pill {
+      display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
+      padding: 5px 9px; border-radius: 999px; color: #fff; background: var(--stage-color, var(--brand));
+      font-size: .74rem; font-weight: 800;
+    }
+    .stage-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .9; }
+    .snapshot-count { margin-top: 13px; color: var(--muted); font-size: .8rem; }
+    .pipeline-shell { overflow-x: auto; padding: 1px 1px 12px; }
+    .pipeline-board { min-width: 1680px; display: grid; grid-template-columns: repeat(8, minmax(190px, 1fr)); gap: 10px; align-items: start; }
+    .stage-column { overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: #edf2ef; }
+    .stage-header { padding: 13px 13px 11px; color: #fff; background: var(--stage-color); }
+    .stage-number { font-size: .7rem; font-weight: 820; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+    .stage-header h3 { margin: 3px 0 0; font-size: .92rem; line-height: 1.25; }
+    .stage-body { display: grid; gap: 9px; padding: 9px; min-height: 132px; }
+    .candidate-card {
+      width: 100%; padding: 12px; text-align: left; color: inherit;
+      border: 1px solid #d9e3df; border-radius: 10px; background: #fff; box-shadow: 0 2px 5px rgba(9,55,52,.04);
+    }
+    .candidate-card:hover, .candidate-card:focus-visible { border-color: var(--stage-color); box-shadow: 0 7px 18px rgba(9,55,52,.09); outline: none; transform: translateY(-1px); }
+    .candidate-title { display: block; margin-bottom: 5px; font-weight: 770; font-size: .87rem; line-height: 1.24; }
+    .candidate-pathogen { display: block; color: var(--muted); font-size: .73rem; line-height: 1.3; }
+    .candidate-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+    .tag { padding: 3px 6px; border-radius: 5px; background: #eef4f2; color: #425d5a; font-size: .67rem; font-weight: 680; }
+    .tag-active { background: #dcfae6; color: #07633d; }
+    .empty-stage { padding: 18px 6px; text-align: center; color: #778987; font-size: .8rem; }
+    .table-wrap { overflow: auto; max-height: 710px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+    table { width: 100%; min-width: 1180px; border-collapse: collapse; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid #e5ece9; text-align: left; vertical-align: top; font-size: .82rem; }
+    thead th { position: sticky; top: 0; z-index: 2; background: #eaf1ee; color: #385250; font-size: .72rem; text-transform: uppercase; letter-spacing: .045em; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover, tbody tr:focus-within { background: #f5fbf9; }
+    .table-candidate { font-weight: 750; }
+    .source-link { font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .no-results { display: none; padding: 38px; text-align: center; border: 1px dashed #b7c8c2; border-radius: 13px; color: var(--muted); background: #fff; }
+    .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .method-card { padding: 19px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+    .method-card h3 { margin: 0 0 7px; font-size: 1rem; }
+    .method-card p { margin: 0; color: var(--muted); font-size: .88rem; }
+    .stage-legend { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: .72rem; }
+    .legend-swatch { width: 9px; height: 9px; border-radius: 50%; background: var(--stage-color); }
+    footer { padding: 26px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+    .footer-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    dialog {
+      width: min(850px, calc(100% - 24px)); max-height: min(88vh, 920px); padding: 0;
+      border: 0; border-radius: 18px; color: var(--ink); background: #fff; box-shadow: 0 32px 90px rgba(0,0,0,.25);
+    }
+    dialog::backdrop { background: rgba(4,25,24,.66); backdrop-filter: blur(2px); }
+    .modal-head { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; gap: 15px; padding: 20px 22px; border-bottom: 1px solid var(--line); background: #fff; }
+    .modal-head h2 { margin: 0; font-size: 1.4rem; letter-spacing: -.025em; }
+    .modal-head p { margin: 4px 0 0; color: var(--muted); font-size: .86rem; }
+    .close-button { width: 37px; height: 37px; border: 1px solid var(--line); border-radius: 9px; background: #fff; font-size: 1.35rem; line-height: 1; }
+    .modal-body { padding: 22px; }
+    .detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .detail { padding: 12px; border: 1px solid #e0e8e5; border-radius: 10px; background: #f8fbfa; }
+    .detail dt { margin-bottom: 4px; color: var(--muted); font-size: .68rem; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; }
+    .detail dd { margin: 0; font-size: .86rem; overflow-wrap: anywhere; }
+    .detail-wide { grid-column: 1 / -1; }
+    .narrative { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .narrative h3 { margin: 0 0 5px; font-size: .93rem; }
+    .narrative p { margin: 0 0 15px; color: #385250; }
+    .modal-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 18px; }
+    @media (max-width: 1050px) {
+      .hero { grid-template-columns: 1fr; gap: 28px; }
+      .hero-aside { max-width: 660px; }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .snapshot-grid { grid-template-columns: repeat(2, 1fr); }
+      .control-grid { grid-template-columns: repeat(2, 1fr); }
+      .method-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 650px) {
+      .shell { width: min(100% - 24px, 1480px); }
+      .nav-links { display: none; }
+      .hero { padding: 36px 0 54px; }
+      .notice { margin-top: -42px; }
+      .kpis, .snapshot-grid, .control-grid, .detail-grid { grid-template-columns: 1fr; }
+      .controls { position: static; }
+      .detail-wide { grid-column: auto; }
+      .section-head { align-items: start; flex-direction: column; }
+      .updated { white-space: normal; }
+    }
+    @media print {
+      .site-header, .controls, .hero-actions, .nav, dialog, footer { display: none !important; }
+      body { background: #fff; }
+      .notice { margin: 0; box-shadow: none; }
+      .pipeline-shell { overflow: visible; }
+      .pipeline-board { min-width: 0; grid-template-columns: repeat(4, 1fr); }
+      .stage-column { break-inside: avoid; }
+      .table-wrap { max-height: none; overflow: visible; }
+      table { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to dashboard</a>
+<header class="site-header">
+  <div class="shell">
+    <nav class="nav" aria-label="Primary navigation">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">BP</span><span>Bacterial Pathogen Pipeline</span></div>
+      <div class="nav-links">
+        <a href="#overview">Overview</a><a href="#pathway">Pathway</a><a href="#records">Records</a><a href="#methods">Methods</a>
+      </div>
+    </nav>
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Source-linked vaccine development landscape</div>
+        <h1>Priority bacterial pathogen vaccine dashboard</h1>
+        <p class="hero-copy">Track human-vaccine candidates, clinical milestones, authorization signals, and evidence gaps for cholera, plague, Shigella, Klebsiella pneumoniae, and invasive non-typhoidal Salmonella.</p>
+      </div>
+      <aside class="hero-aside" aria-label="Scope statement">
+        <strong>What this dashboard is</strong>
+        <p>A reproducible landscape built from curated evidence and conservative ClinicalTrials.gov matches. It is not a disease-incidence map, clinical guideline, or exhaustive regulatory database.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="__CSV_NAME__" download>Download CSV</a>
+          <a class="button button-secondary" href="__REPORT_NAME__">Automation report</a>
+          <button class="button button-secondary" type="button" onclick="window.print()">Print view</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <div class="shell">
+    <div class="notice" role="note">
+      <span class="notice-icon" aria-hidden="true">i</span>
+      <p><strong>Interpretation guardrail:</strong> a trial match is not evidence of authorization or routine use. Automated records are capped at the efficacy/Phase 3 stage; authorization, WHO prequalification, stockpile, and programme claims must be entered from curated official evidence.</p>
+    </div>
+
+    <section class="section" id="overview" aria-labelledby="overview-heading">
+      <div class="section-head">
+        <div><h2 id="overview-heading">Landscape overview</h2><p>Counts update as filters change. “Active” includes recruiting, not-yet-recruiting, enrolling-by-invitation, and active-not-recruiting clinical records.</p></div>
+        <div class="updated">Build: <time id="build-time"></time></div>
+      </div>
+      <div class="kpis" aria-live="polite">
+        <div class="kpi"><span class="kpi-value" id="kpi-targets">0</span><span class="kpi-label">Targets represented</span></div>
+        <div class="kpi"><span class="kpi-value" id="kpi-records">0</span><span class="kpi-label">Source-linked records</span></div>
+        <div class="kpi"><span class="kpi-value" id="kpi-active">0</span><span class="kpi-label">Active clinical records</span></div>
+        <div class="kpi"><span class="kpi-value" id="kpi-late">0</span><span class="kpi-label">Records at Phase 3 or later</span></div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Dashboard filters">
+      <div class="controls">
+        <div class="control-grid">
+          <div class="field"><label for="search">Search</label><input id="search" type="search" placeholder="Candidate, sponsor, serovar, country…"></div>
+          <div class="field"><label for="pathogen-filter">Pathogen</label><select id="pathogen-filter"><option value="all">All pathogens</option></select></div>
+          <div class="field"><label for="group-filter">Pathogen group</label><select id="group-filter"><option value="all">All groups</option></select></div>
+          <div class="field"><label for="stage-filter">Development stage</label><select id="stage-filter"><option value="all">All stages</option></select></div>
+        </div>
+        <div class="checks">
+          <label><input id="active-only" type="checkbox"> Active clinical records only</label>
+          <label><input id="show-gaps" type="checkbox" checked> Show generated evidence-gap rows</label>
+          <button class="button button-subtle" id="reset-filters" type="button">Reset filters</button>
+          <span id="result-count" aria-live="polite"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="snapshot-heading">
+      <div class="section-head"><div><h2 id="snapshot-heading">Target snapshots</h2><p>Highest mapped pathway position among the currently visible records.</p></div></div>
+      <div class="snapshot-grid" id="snapshot-grid"></div>
+    </section>
+
+    <section class="section" id="pathway" aria-labelledby="pathway-heading">
+      <div class="section-head"><div><h2 id="pathway-heading">Development pathway</h2><p>Select a card to inspect the evidence, trial metadata, and next milestone. Scroll horizontally to compare all eight stages.</p></div></div>
+      <div class="pipeline-shell" tabindex="0" aria-label="Horizontally scrollable vaccine development pathway">
+        <div class="pipeline-board" id="pipeline-board"></div>
+      </div>
+    </section>
+
+    <section class="section" id="records" aria-labelledby="records-heading">
+      <div class="section-head"><div><h2 id="records-heading">Evidence records</h2><p>The source and last-verification fields make every claim auditable. Select a row for full details.</p></div></div>
+      <div class="table-wrap" id="table-wrap">
+        <table>
+          <thead><tr><th>Candidate</th><th>Pathogen</th><th>Stage</th><th>Status</th><th>Phase</th><th>Sponsor</th><th>Trial / source</th><th>Last verified</th></tr></thead>
+          <tbody id="records-body"></tbody>
+        </table>
+      </div>
+      <div class="no-results" id="no-results"><strong>No records match these filters.</strong><br>Reset the filters or broaden the search.</div>
+    </section>
+
+    <section class="section" id="methods" aria-labelledby="methods-heading">
+      <div class="section-head"><div><h2 id="methods-heading">Methods and limitations</h2><p>This starter deliberately favors traceability over apparent completeness.</p></div></div>
+      <div class="method-grid">
+        <article class="method-card"><h3>Curated evidence</h3><p>Authorization, WHO-prequalification, stockpile, and programme-use rows are maintained manually in <code>data/curated_candidates.csv</code> with a source URL and verification date.</p></article>
+        <article class="method-card"><h3>Automated discovery</h3><p>A Python script searches ClinicalTrials.gov API v2 using target aliases. It accepts interventional vaccine records, updates matching trial IDs, and never promotes an automated row above stage 5.</p></article>
+        <article class="method-card"><h3>Known gaps</h3><p>Trials in other registries, preclinical programmes, national authorizations, discontinued programmes, and unpublished changes can be absent. Review row-level sources before decisions or publication.</p></article>
+      </div>
+      <div class="stage-legend" id="stage-legend" aria-label="Stage legend"></div>
+    </section>
+  </div>
+</main>
+<footer><div class="shell footer-row"><span>Static dashboard generated from version-controlled CSV data.</span><span>Built <time id="footer-build-time"></time> · <a href="pathogens.json">Pathogen configuration</a></span></div></footer>
+
+<dialog id="record-dialog" aria-labelledby="dialog-title">
+  <div class="modal-head"><div><h2 id="dialog-title"></h2><p id="dialog-subtitle"></p></div><button class="close-button" id="close-dialog" type="button" aria-label="Close">×</button></div>
+  <div class="modal-body" id="dialog-body"></div>
+</dialog>
+
+<script>
+  const DATA = __DATA_JSON__;
+  const PATHOGENS = __PATHOGENS_JSON__;
+  const STAGES = __STAGES_JSON__;
+  const BUILT_AT = "__BUILT_AT__";
+  const stageMap = new Map(STAGES.map(stage => [Number(stage.order), stage]));
+  const profileMap = new Map(PATHOGENS.map(profile => [profile.id, profile]));
+  const state = { search: "", pathogen: "all", group: "all", stage: "all", activeOnly: false, showGaps: true };
+
+  const $ = selector => document.querySelector(selector);
+  const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+  const present = value => value !== null && value !== undefined && String(value).trim() !== "";
+  const validHttpUrl = value => { try { const url = new URL(value); return ["http:", "https:"].includes(url.protocol); } catch { return false; } };
+  const stageColor = order => `var(--stage-${Number(order) || 0})`;
+  const activeStatus = status => {
+    const text = String(status || "").toLowerCase();
+    return text.includes("recruiting") || text.includes("enrolling by invitation") || text.includes("active, not recruiting") || text.includes("not yet recruiting");
+  };
+  const isGap = row => row.status_type === "Gap row" || Number(row.stage_order) === 0;
+  const rowSearchText = row => Object.values(row).filter(value => typeof value === "string").join(" ").toLowerCase();
+  const formatBuildDate = iso => {
+    const date = new Date(iso);
+    return Number.isNaN(date.valueOf()) ? iso : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(date) + " UTC";
+  };
+
+  function filteredRows() {
+    const query = state.search.trim().toLowerCase();
+    return DATA.filter(row => {
+      if (state.pathogen !== "all" && row.pathogen_id !== state.pathogen) return false;
+      if (state.group !== "all" && row.pathogen_group !== state.group) return false;
+      if (state.stage !== "all" && Number(row.stage_order) !== Number(state.stage)) return false;
+      if (state.activeOnly && !activeStatus(row.status)) return false;
+      if (!state.showGaps && isGap(row)) return false;
+      if (query && !rowSearchText(row).includes(query)) return false;
+      return true;
+    });
+  }
+
+  function setOptions() {
+    const pathogenSelect = $("#pathogen-filter");
+    PATHOGENS.slice().sort((a,b) => (a.order || 999) - (b.order || 999)).forEach(profile => {
+      pathogenSelect.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(profile.id)}">${escapeHtml(profile.name)}</option>`);
+    });
+    [...new Set(PATHOGENS.map(profile => profile.group))].sort().forEach(group => {
+      $("#group-filter").insertAdjacentHTML("beforeend", `<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`);
+    });
+    STAGES.forEach(stage => {
+      $("#stage-filter").insertAdjacentHTML("beforeend", `<option value="${stage.order}">${stage.order}: ${escapeHtml(stage.short)}</option>`);
+    });
+  }
+
+  function renderKpis(rows) {
+    $("#kpi-targets").textContent = new Set(rows.map(row => row.pathogen_id)).size;
+    $("#kpi-records").textContent = rows.length;
+    $("#kpi-active").textContent = rows.filter(row => activeStatus(row.status)).length;
+    $("#kpi-late").textContent = rows.filter(row => Number(row.stage_order) >= 5).length;
+  }
+
+  function renderSnapshots(rows) {
+    const grid = $("#snapshot-grid");
+    const profiles = PATHOGENS.filter(profile => state.pathogen === "all" || profile.id === state.pathogen);
+    grid.innerHTML = profiles.map(profile => {
+      const records = rows.filter(row => row.pathogen_id === profile.id);
+      const highest = records.length ? Math.max(...records.map(row => Number(row.stage_order) || 0)) : 0;
+      const stage = stageMap.get(highest) || stageMap.get(0);
+      const text = records.length ? `${records.length} visible record${records.length === 1 ? "" : "s"}` : "No visible records under current filters";
+      return `<article class="snapshot" style="--stage-color:${stageColor(highest)}">
+        <h3 class="snapshot-name">${escapeHtml(profile.name)}</h3>
+        <p class="snapshot-target">${escapeHtml(profile.target_scope || "")}</p>
+        <span class="stage-pill"><span class="stage-dot"></span>${highest}: ${escapeHtml(stage.short)}</span>
+        <div class="snapshot-count">${escapeHtml(text)}</div>
+      </article>`;
+    }).join("");
+  }
+
+  function renderPipeline(rows) {
+    $("#pipeline-board").innerHTML = STAGES.map(stage => {
+      const stageRows = rows.filter(row => Number(row.stage_order) === Number(stage.order));
+      const cards = stageRows.length ? stageRows.map(row => {
+        const activeTag = activeStatus(row.status) ? `<span class="tag tag-active">Active</span>` : "";
+        const phaseTag = present(row.phase) ? `<span class="tag">${escapeHtml(row.phase)}</span>` : "";
+        return `<button class="candidate-card" type="button" data-record-id="${escapeHtml(row.record_id)}" style="--stage-color:${stageColor(stage.order)}">
+          <span class="candidate-title">${escapeHtml(row.candidate)}</span>
+          <span class="candidate-pathogen">${escapeHtml(row.pathogen)}</span>
+          <span class="candidate-meta">${activeTag}${phaseTag}</span>
+        </button>`;
+      }).join("") : `<div class="empty-stage">No visible records</div>`;
+      return `<section class="stage-column" style="--stage-color:${stageColor(stage.order)}" aria-label="Stage ${stage.order}: ${escapeHtml(stage.label)}">
+        <div class="stage-header"><div class="stage-number">Stage ${stage.order} · ${stageRows.length} record${stageRows.length === 1 ? "" : "s"}</div><h3>${escapeHtml(stage.label)}</h3></div>
+        <div class="stage-body">${cards}</div>
+      </section>`;
+    }).join("");
+  }
+
+  function renderTable(rows) {
+    const body = $("#records-body");
+    const sorted = rows.slice().sort((a,b) => {
+      const profileOrder = (profileMap.get(a.pathogen_id)?.order || 999) - (profileMap.get(b.pathogen_id)?.order || 999);
+      return profileOrder || Number(b.stage_order) - Number(a.stage_order) || String(a.candidate).localeCompare(String(b.candidate));
+    });
+    body.innerHTML = sorted.map(row => {
+      const stage = stageMap.get(Number(row.stage_order)) || stageMap.get(0);
+      const source = validHttpUrl(row.source_url)
+        ? `<a class="source-link" href="${escapeHtml(row.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(row.trial_id || row.source_title || "Open source")}</a>`
+        : escapeHtml(row.trial_id || row.source_title || "—");
+      return `<tr tabindex="0" data-record-id="${escapeHtml(row.record_id)}">
+        <td class="table-candidate">${escapeHtml(row.candidate)}</td><td>${escapeHtml(row.pathogen)}</td>
+        <td><span class="stage-pill" style="--stage-color:${stageColor(row.stage_order)}">${row.stage_order}: ${escapeHtml(stage.short)}</span></td>
+        <td>${escapeHtml(row.status || "—")}</td><td>${escapeHtml(row.phase || "—")}</td><td>${escapeHtml(row.sponsor || "—")}</td><td>${source}</td><td>${escapeHtml(row.last_verified || "—")}</td>
+      </tr>`;
+    }).join("");
+    $("#table-wrap").style.display = rows.length ? "block" : "none";
+    $("#no-results").style.display = rows.length ? "none" : "block";
+  }
+
+  function renderLegend() {
+    $("#stage-legend").innerHTML = STAGES.map(stage => `<span class="legend-item" style="--stage-color:${stageColor(stage.order)}"><span class="legend-swatch"></span>${stage.order}: ${escapeHtml(stage.short)}</span>`).join("");
+  }
+
+  function detail(label, value, wide = false) {
+    if (!present(value)) return "";
+    return `<div class="detail${wide ? " detail-wide" : ""}"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`;
+  }
+
+  function openRecord(recordId) {
+    const row = DATA.find(item => item.record_id === recordId);
+    if (!row) return;
+    const stage = stageMap.get(Number(row.stage_order)) || stageMap.get(0);
+    $("#dialog-title").textContent = row.candidate;
+    $("#dialog-subtitle").textContent = `${row.pathogen} · Stage ${row.stage_order}: ${stage.label}`;
+    const sourceButton = validHttpUrl(row.source_url) ? `<a class="button button-primary" href="${escapeHtml(row.source_url)}" target="_blank" rel="noopener">Open source evidence ↗</a>` : "";
+    $("#dialog-body").innerHTML = `
+      <dl class="detail-grid">
+        ${detail("Status", row.status)}${detail("Phase", row.phase)}${detail("Status type", row.status_type)}
+        ${detail("Platform", row.platform)}${detail("Sponsor", row.sponsor)}${detail("Trial ID", row.trial_id)}
+        ${detail("Serovars / strains", row.serovars, true)}${detail("Target population", row.population, true)}
+        ${detail("Countries", row.countries)}${detail("Enrollment", row.enrollment)}${detail("Start date", row.start_date)}
+        ${detail("Primary completion", row.primary_completion_date)}${detail("Registry updated", row.registry_last_updated)}${detail("Last verified", row.last_verified)}
+        ${detail("Target scope", row.target_scope, true)}${detail("Priority rationale", row.priority_rationale, true)}
+      </dl>
+      <div class="narrative">
+        ${present(row.evidence_summary) ? `<h3>Evidence summary</h3><p>${escapeHtml(row.evidence_summary)}</p>` : ""}
+        ${present(row.next_milestone) ? `<h3>Next milestone</h3><p>${escapeHtml(row.next_milestone)}</p>` : ""}
+        ${present(row.source_title) ? `<h3>Evidence source</h3><p>${escapeHtml(row.source_title)}${present(row.source_date) ? ` · ${escapeHtml(row.source_date)}` : ""}</p>` : ""}
+        ${present(row.automation_notes) ? `<h3>Automation / curation note</h3><p>${escapeHtml(row.automation_notes)}</p>` : ""}
+      </div>
+      <div class="modal-actions">${sourceButton}<button class="button button-subtle" type="button" onclick="document.getElementById('record-dialog').close()">Close</button></div>`;
+    $("#record-dialog").showModal();
+  }
+
+  function render() {
+    const rows = filteredRows();
+    renderKpis(rows); renderSnapshots(rows); renderPipeline(rows); renderTable(rows);
+    $("#result-count").textContent = `${rows.length} of ${DATA.length} records visible`;
+  }
+
+  function bindEvents() {
+    $("#search").addEventListener("input", event => { state.search = event.target.value; render(); });
+    $("#pathogen-filter").addEventListener("change", event => { state.pathogen = event.target.value; render(); });
+    $("#group-filter").addEventListener("change", event => { state.group = event.target.value; render(); });
+    $("#stage-filter").addEventListener("change", event => { state.stage = event.target.value; render(); });
+    $("#active-only").addEventListener("change", event => { state.activeOnly = event.target.checked; render(); });
+    $("#show-gaps").addEventListener("change", event => { state.showGaps = event.target.checked; render(); });
+    $("#reset-filters").addEventListener("click", () => {
+      Object.assign(state, { search: "", pathogen: "all", group: "all", stage: "all", activeOnly: false, showGaps: true });
+      $("#search").value = ""; $("#pathogen-filter").value = "all"; $("#group-filter").value = "all"; $("#stage-filter").value = "all"; $("#active-only").checked = false; $("#show-gaps").checked = true; render();
+    });
+    document.addEventListener("click", event => {
+      const target = event.target.closest("[data-record-id]");
+      if (target) openRecord(target.dataset.recordId);
+    });
+    document.addEventListener("keydown", event => {
+      if ((event.key === "Enter" || event.key === " ") && event.target.matches("tr[data-record-id]")) { event.preventDefault(); openRecord(event.target.dataset.recordId); }
+    });
+    $("#close-dialog").addEventListener("click", () => $("#record-dialog").close());
+    $("#record-dialog").addEventListener("click", event => { if (event.target === $("#record-dialog")) $("#record-dialog").close(); });
+  }
+
+  setOptions(); renderLegend(); bindEvents(); render();
+  $("#build-time").textContent = formatBuildDate(BUILT_AT);
+  $("#footer-build-time").textContent = formatBuildDate(BUILT_AT);
+</script>
+</body>
+</html>
